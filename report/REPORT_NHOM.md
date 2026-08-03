@@ -132,19 +132,27 @@ embedder = GeminiEmbedder(model_name="models/gemini-embedding-001")
 ```
 
 **Thành viên 4 — Lê Kim Tính (2A202601560)**
-- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
-- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Loại chiến lược:** `RecursiveChunker` (chunk_size=500) kết hợp `LocalEmbedder` (`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`)
+- **Mô tả & lý do:** Thuật toán thử lần lượt các separator theo độ ưu tiên (đoạn văn → xuống dòng → dấu chấm → khoảng trắng → ký tự), gộp các mảnh nhỏ liền kề lại nếu tổng độ dài không vượt `chunk_size`, giúp giữ trọn ý trong mỗi chunk. Chạy 5 câu hỏi benchmark bằng embedder đa ngôn ngữ thật (không dùng mock): **3/5 câu có chunk liên quan trong top-3** (câu 2, 3, 5), điểm similarity 0.59–0.89. Câu 1 thất bại vì câu hỏi gộp nhiều ý (đổi hàng + hàng lỗi + phải làm gì) khiến corpus trả nhầm chunk về phí vận chuyển. Câu 4 cũng thất bại dù dùng `metadata_filter={"customer_role": "buyer"}` — nguyên nhân: **toàn bộ tài liệu hiện đều gắn `customer_role: buyer`** (không có `both`/`seller`) nên filter không thu hẹp được tập ứng viên. Đề xuất: **cần nhóm rà soát lại metadata `customer_role` của `return-refund-policy.md`** trước khi chấm retrieval câu hỏi #4.
 - **Code snippet:**
 ```python
-# Điền code cấu hình chiến lược
+from LeKimTinh_2A202601560.src.chunking import RecursiveChunker
+from LeKimTinh_2A202601560.src.embeddings import LocalEmbedder
+
+chunker = RecursiveChunker(chunk_size=500)
+embedder = LocalEmbedder()  # mặc định sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 ```
 
 **Thành viên 5 — Trần Chí Hiển (2A202601162)**
-- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
-- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Loại chiến lược:** `FixedSizeChunker` (chunk_size=500, overlap=50) kết hợp Mock embedder (fallback bắt buộc — môi trường không tải được `LocalEmbedder` và không có API key OpenAI/Gemini)
+- **Mô tả & lý do:** Trong khi 4 thành viên còn lại đều dùng chiến lược chunking nâng cao (Recursive, PolicySection theo heading, Sentence), tôi chọn giữ nguyên `FixedSizeChunker` — chiến lược baseline đơn giản nhất — để nhóm có một mốc so sánh rõ ràng giữa "baseline" và "chiến lược nâng cao". Trên tài liệu `return-refund-request-guide.md` (2.521 ký tự, `chunk_size=200`), FixedSizeChunker tạo 17 chunks, độ dài trung bình 195,4 ký tự — nhiều chunk hơn hẳn SentenceChunker (8 chunks, TB 311,6 ký tự) vì không tôn trọng ranh giới câu/đoạn, dễ cắt ngang ý. Do sandbox không tải được model nhúng và không có API key thật, tôi buộc dùng Mock embedder (đúng quy tắc fallback của bài); kết quả retrieval vì vậy không phản ánh chất lượng ngữ nghĩa thật (khác với kết quả 0,65–0,77 của các bạn dùng Gemini/OpenAI) — chi tiết số liệu và phân tích lỗi nằm trong `TranChiHien_2A202601162/REPORT_CANHAN.md`.
 - **Code snippet:**
 ```python
-# Điền code cấu hình chiến lược
+from TranChiHien_2A202601162.src.chunking import FixedSizeChunker
+from TranChiHien_2A202601162.src.embeddings import MockEmbedder  # fallback: không tải được LocalEmbedder
+
+chunker = FixedSizeChunker(chunk_size=500, overlap=50)
+embedder = MockEmbedder()
 ```
 
 ### So Sánh Giữa Các Chiến Lược
