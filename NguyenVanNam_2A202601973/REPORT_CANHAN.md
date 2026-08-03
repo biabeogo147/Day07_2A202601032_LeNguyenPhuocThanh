@@ -6,7 +6,7 @@
 **Nhóm:** Những con vịt bầu  
 **Ngày:** 03/08/2026  
 
-> **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
+> **Nộp 1 bản / sinh viên.** Phần nhóm nộp chung trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
 **Tổng điểm phần cá nhân: 60** = Khởi động (5) + Hướng tiếp cận (10) + Hoàn thiện code (30) + Dự đoán độ tương tự (5) + Kết quả truy xuất của tôi (10).
 
@@ -16,69 +16,60 @@
 
 ### Độ tương tự Cosine (Cosine Similarity) (Bài tập 1.1)
 
-**Độ tương tự cosine cao (High cosine similarity) nghĩa là gì?**
-> Hai vector văn bản hướng về cùng một phía trong không gian vector biểu diễn (góc giữa hai vector xấp xỉ 0 độ), thể hiện mức độ tương đồng cao về mặt ý nghĩa, ngữ nghĩa và chủ đề, độc lập với độ dài ngắn của văn bản.
+**Độ tương tự cosine cao nghĩa là gì?**
+> Hai vector văn bản hướng về cùng một phía trong không gian vector (góc xấp xỉ 0 độ), thể hiện tương đồng cao về ngữ nghĩa, độc lập với độ dài văn bản.
 
 **Ví dụ có độ tương tự CAO:**
-- Câu A: *Con mèo đang nằm ngủ say trên chiếc ghế sô pha.*
-- Câu B: *Mèo con đang ngủ trên ghế dài phòng khách.*
-- Tại sao tương đồng: Cả hai câu cùng mô tả trạng thái một chú mèo đang nằm ngủ trên ghế trong phòng khách, chia sẻ các khái niệm và ngữ cảnh cốt lõi giống nhau.
+- Câu A: Con mèo đang nằm ngủ say trên chiếc ghế sô pha.
+- Câu B: Mèo con đang ngủ trên ghế dài phòng khách.
+- Tại sao: Cùng mô tả mèo ngủ trên ghế, chia sẻ khái niệm cốt lõi.
 
 **Ví dụ có độ tương tự THẤP:**
-- Câu A: *Cầu thủ đã ghi bàn thắng quyết định ở phút 90.*
-- Câu B: *Công thức hóa học của axit sunfuric là H2SO4.*
-- Tại sao khác: Hai câu thuộc hai lĩnh vực hoàn toàn không liên quan (thể thao bóng đá và hóa học vô cơ), không có từ vựng hay ngữ cảnh tương đồng.
+- Câu A: Cầu thủ đã ghi bàn thắng quyết định ở phút 90.
+- Câu B: Công thức hóa học của axit sunfuric là H2SO4.
+- Tại sao: Hai lĩnh vực hoàn toàn khác nhau.
 
-**Tại sao độ tương tự cosine (cosine similarity) được ưu tiên hơn khoảng cách Euclid (Euclidean distance) cho text embeddings?**
-> Cosine similarity đo góc định hướng giữa hai vector thay vì độ dài độ lớn (magnitude). Do đó, một câu ngắn và một đoạn văn dài có cùng nội dung vẫn đạt điểm tương đồng cao với Cosine, trong khi khoảng cách Euclid sẽ bị kéo giãn và sai lệch lớn do độ dài văn bản khác nhau.
+**Tại sao cosine similarity được ưu tiên hơn Euclidean distance?**
+> Cosine chỉ đo góc giữa vector, không bị ảnh hưởng bởi magnitude. Câu ngắn và đoạn văn dài cùng ý nghĩa vẫn đạt điểm cao, trong khi Euclidean bị sai lệch do độ dài khác nhau.
 
 ### Bài toán tính toán Chunking (Bài tập 1.2)
 
-**Tài liệu 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
-> *Trình bày phép tính:* 
-> - Bước nhảy (stride) = `chunk_size - overlap` = `500 - 50 = 450` ký tự.
-> - Số lượng chunk = `1 + ceil((10000 - 500) / 450) = 1 + ceil(9500 / 450) = 1 + ceil(21.111) = 1 + 22 = 23 chunks`.
-> - *Đáp án:* **23 chunks**
+**10,000 ký tự, chunk_size=500, overlap=50:**
+> stride = 500-50 = 450. Chunks = ceil((10000-50)/(500-50)) = ceil(9950/450) = ceil(22.11) = **23 chunks**
 
-**Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk thay đổi thế nào? Tại sao muốn độ chồng chéo nhiều hơn?**
-> - Bước nhảy mới = `500 - 100 = 400` ký tự.
-> - Số lượng chunk = `1 + ceil((10000 - 500) / 400) = 1 + ceil(9500 / 400) = 1 + 24 = 25 chunks`.
-> - Ta muốn tăng overlap để đảm bảo thông tin và ngữ cảnh tại các ranh giới cắt giữa các chunk không bị chia tách hoặc đứt gãy, giúp hệ thống RAG truy xuất được đầy đủ ý nghĩa liên tục của câu văn.
+**Overlap tăng lên 100:**
+> stride = 500-100 = 400. Chunks = ceil((10000-100)/(500-100)) = ceil(9900/400) = **25 chunks**. Tăng overlap giúp giữ ngữ cảnh liên tục tại ranh giới chunk.
 
 ---
 
 ## 2. Hướng tiếp cận của tôi (My Approach) — Cá nhân (10 điểm)
 
-Giải thích cách tiếp cận khi lập trình (implement) các phần chính trong gói `src`.
-
 ### Các hàm chia nhỏ (Chunking Functions)
 
-**`SentenceChunker.chunk`** — hướng tiếp cận:
-> Sử dụng biểu thức chính quy `re.split(r'(?<=[.!?])\s+|\.\n', text)` để xác định ranh giới kết thúc câu một cách chuẩn xác theo dấu câu tiếng Việt và tiếng Anh. Sau khi loại bỏ câu rỗng và làm sạch khoảng trắng, các câu được gom nhóm thành các chunk văn bản với số lượng câu tối đa theo tham số `max_sentences_per_chunk`.
+**`SentenceChunker.chunk`:**
+> Dùng regex `re.split(r'(?<=[.!?])\s+|\.\n', text)` nhận diện ranh giới câu. Loại bỏ câu rỗng, gom nhóm theo `max_sentences_per_chunk`.
 
-**`RecursiveChunker.chunk` / `_split`** — hướng tiếp cận:
-> Áp dụng thuật toán chia đệ quy phân cấp với danh sách phân cách ưu tiên từ lớn đến nhỏ: `["\n\n", "\n", ". ", " ", ""]`. Nếu đoạn văn bản vượt quá `chunk_size`, hệ thống tách theo dấu phân cách ưu tiên hiện tại và ghép nối tuần tự với khoảng gối đầu `overlap`. Nếu bất kỳ đoạn con nào vẫn dài hơn `chunk_size`, hàm tiếp tục gọi đệ quy `_split` với dấu phân cách có mức ưu tiên tiếp theo.
+**`RecursiveChunker.chunk` / `_split`:**
+> Thuật toán đệ quy với phân cách ưu tiên `["\n\n", "\n", ". ", " ", ""]`. Tách theo phân cách hiện tại, ghép tuần tự; nếu đoạn con vượt `chunk_size` thì gọi đệ quy với phân cách tiếp theo.
 
 ### Lớp EmbeddingStore
 
-**`add_documents` + `search`** — hướng tiếp cận:
-> `add_documents` sinh mã định danh duy nhất (UUID), tính vector embedding cho từng Document chunk bằng `embedding_fn`, lưu trữ bản ghi vào danh sách nội bộ `_store` (và đồng bộ vào ChromaDB nếu có). `search` chuyển đổi câu truy vấn thành vector embedding, tính độ tương tự cosine / tích vô hướng chuẩn hóa với toàn bộ vector trong kho, sau đó sắp xếp giảm dần theo điểm số để trả về `top_k` kết quả có điểm cao nhất.
+**`add_documents` + `search`:**
+> `add_documents` sinh UUID, tính embedding bằng `embedding_fn`, lưu vào `_store`. `search` nhúng query thành vector, tính cosine similarity với toàn bộ vector, sắp xếp giảm dần trả `top_k`.
 
-**`search_with_filter` + `delete_document`** — hướng tiếp cận:
-> `search_with_filter` duyệt và tiền lọc danh sách bản ghi, chỉ giữ lại các chunk thỏa mãn toàn bộ các cặp key-value trong `metadata_filter` trước khi tiến hành tính toán độ tương đồng cosine. `delete_document` tìm kiếm và loại bỏ tất cả các chunk có `id == doc_id` hoặc `metadata.get('doc_id') == doc_id` và trả về `True` nếu có ít nhất một bản ghi bị xóa.
+**`search_with_filter` + `delete_document`:**
+> `search_with_filter` tiền lọc theo `metadata_filter` rồi mới tính similarity. `delete_document` xóa tất cả chunk có `id == doc_id` hoặc `metadata.doc_id == doc_id`.
 
-### Tác tử KnowledgeBaseAgent
+### KnowledgeBaseAgent
 
-**`answer`** — hướng tiếp cận:
-> Tác tử nhận câu hỏi từ người dùng, gọi `store.search(query, top_k=top_k)` để thu thập ngữ cảnh liên quan nhất. Ngữ cảnh được định dạng vào cấu trúc Prompt RAG tiêu chuẩn gồm chỉ dẫn rõ ràng (`Context... Question... Answer:`). Sau đó, prompt được chuyển qua mô hình LLM (Gemini 2.5 Flash / `llm_fn`) để tổng hợp câu trả lời ngắn gọn, chính xác dựa trên dữ liệu thực tế.
+**`answer`:**
+> Gọi `store.search(query, top_k)` → tổng hợp ngữ cảnh → xây prompt RAG → gọi Gemini 2.5 Flash qua `llm_fn` để sinh câu trả lời.
 
 ---
 
 ## 3. Hoàn thiện code (Core Implementation) — Cá nhân (30 điểm)
 
-Vượt qua toàn bộ 42/42 bộ kiểm thử tự động của hệ thống.
-
-### Kết Quả Kiểm Thử (Test Results)
+Paste the FULL test results below:
 
 ```
 ============================= test session starts =============================
@@ -138,7 +129,7 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-Đo lường độ tương tự ngữ nghĩa thực tế sử dụng mô hình **Gemini Embedding 2** (`models/gemini-embedding-2`):
+Using **Gemini Embedding 2** (`models/gemini-embedding-2`):
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế (Gemini Embedding 2) | Đánh giá |
 |------|-----------|-----------|---------|-----------------------------------|----------|
@@ -148,27 +139,27 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 | 4 | Thuật toán RAG kết hợp retrieval và LLM | Vector database dùng để lưu trữ embedding | Cao | **0.7757** | Đúng |
 | 5 | Hà Nội là thủ đô của Việt Nam | Paris là thủ đô của nước Pháp | Cao | **0.7108** | Đúng |
 
-**Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> Cặp số 5 ("Hà Nội là thủ đô của Việt Nam" và "Paris là thủ đô của nước Pháp") đạt điểm tương đồng cao (**0.7108**) dù không chia sẻ từ vựng về địa danh cụ thể nào. Điều này chứng minh không gian embedding của mô hình **Gemini Embedding 2** nắm bắt được cấu trúc quan hệ ngữ nghĩa mức cao (quan hệ *Thủ đô - Quốc gia* / *Capital-Country relationship*) chứ không chỉ so khớp từ khóa cơ học.
+**Kết quả nào bất ngờ nhất?**
+> Cặp 5 đạt 0.7108 dù không chia sẻ từ vựng địa danh nào. Chứng tỏ Gemini Embedding 2 nắm bắt được quan hệ ngữ nghĩa mức cao (Capital-Country relationship) chứ không chỉ so khớp từ khóa.
 
 ---
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy **5 câu hỏi đánh giá của nhóm** với mô hình **Gemini Embedding 2** (`models/gemini-embedding-2`) và tác tử **Gemini 2.5 Flash**:
+Chạy 5 câu hỏi đánh giá trên bộ dữ liệu **chính sách Shopee thực tế** (5 tài liệu, 83 chunks) với **Gemini Embedding 2** + **Gemini 2.5 Flash**:
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
+| # | Câu hỏi (Query) | Top-1 Chunk (tóm tắt) | Điểm Score | Relevant? | Agent Answer (tóm tắt) |
 |---|---|---|---|---|---|
-| 1 | Quy định đổi trả hàng bị lỗi thế nào? | `returns-policy.md`: ...yêu cầu trả hàng hoặc hoàn tiền nếu sản phẩm bị lỗi do nhà sản xuất... | **0.6908** | Có | Người mua có quyền gửi yêu cầu đổi trả/hoàn tiền khi hàng lỗi, cần cung cấp bằng chứng và gửi trong thời hạn quy định. |
-| 2 | Người bán có trách nhiệm gì khi đăng bán sản phẩm? | `seller-listing.md`: ...chịu trách nhiệm hoàn toàn về thông tin sản phẩm (giá, mô tả, tình trạng)... | **0.7020** | Có | Người bán chịu trách nhiệm toàn bộ về độ chính xác thông tin và không được bán hàng cấm. |
-| 3 | Người mua có quyền gì khi hàng nhận không đúng mô tả? | `returns-policy.md`: ...yêu cầu trả hàng hoặc hoàn tiền nếu không đúng mô tả... | **0.6698** | Có | Người mua được quyền yêu cầu hoàn tiền/đổi trả trong thời hạn quy định kèm bằng chứng cụ thể. |
-| 4 | Thời hạn gửi yêu cầu đổi trả hàng là khi nào? | `returns-policy.md`: ...phải được gửi trong thời hạn quy định ghi trên trang sản phẩm hoặc chính sách sàn... | **0.6558** | Có | Yêu cầu phải gửi trong thời hạn quy định ghi trên trang sản phẩm hoặc chính sách của sàn. |
-| 5 | Sản phẩm nào bị cấm đăng bán trên sàn? | `seller-listing.md`: ...không được đăng bán sản phẩm bị hạn chế hoặc cấm theo quy định pháp luật... | **0.6622** | Có | Nghiêm cấm các sản phẩm bị hạn chế hoặc cấm theo pháp luật và chính sách của sàn thương mại điện tử. |
+| 1 | Shopee có hỗ trợ đổi hàng không? Nếu hàng có vấn đề thì người mua phải làm gì? | `return-refund-general-rules`: Shopee hiện chưa hỗ trợ đổi hàng. Nếu hàng có vấn đề, có thể từ chối nhận khi đồng kiểm hoặc gửi yêu cầu TH/HT | **0.7284** | Có | Shopee chưa hỗ trợ đổi hàng; người mua có thể từ chối nhận khi đồng kiểm hoặc gửi yêu cầu Trả hàng/Hoàn tiền. |
+| 2 | Thời hạn gửi yêu cầu trả hàng/hoàn tiền trên Shopee là bao lâu? | `return-refund-general-rules`: Thực phẩm tươi sống 24 giờ, đơn tiêu chuẩn 15 ngày, người bán tự giao tối đa 20 ngày | **0.7305** | Có | 24 giờ cho thực phẩm tươi sống/đông lạnh, 15 ngày cho đơn tiêu chuẩn, tối đa 20 ngày cho đơn người bán tự giao. |
+| 3 | Người mua cần gửi yêu cầu trả hàng bằng cách nào trên ứng dụng Shopee? | `return-refund-request-guide`: Hai cách — qua trang đơn hàng hoặc qua mục Hỗ trợ khách hàng | **0.7500** | Có | Cách 1: Tôi > Chờ giao hàng/Đã giao > Trả hàng/Hoàn tiền. Cách 2: Tôi > Trò Chuyện Với Shopee > Khiếu nại. |
+| 4 | Người bán phải chịu phí vận chuyển hoàn trả trong trường hợp nào? (filter: customer_role=both) | `return-refund-policy`: Người Bán chịu chi phí vận chuyển hoàn trả khi sản phẩm thuộc lỗi của Người Bán | **0.7569** | Có | Người bán chịu phí khi sản phẩm lỗi/hư hỏng/không đúng mô tả do người bán, hoặc trường hợp ngoại lệ theo quyết định Shopee. |
+| 5 | Có những phương thức gửi hàng hoàn trả nào và chi phí ra sao? | `return-shipping-methods`: 3 phương thức — ĐV vận chuyển đến lấy, trả tại bưu cục, tự sắp xếp | **0.7689** | Có | 3 phương thức: (1) ĐV vận chuyển đến lấy (miễn phí), (2) Trả tại bưu cục SPX/GHN (miễn phí), (3) Tự sắp xếp (tự trả trước, Shopee hoàn sau). |
 
 **Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 5 / 5 (100%)
 
-**Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> Việc áp dụng mô hình embedding ngữ nghĩa hiện đại như **Gemini Embedding 2** kết hợp cơ chế lọc siêu dữ liệu (`search_with_filter`) giúp hệ thống RAG định vị chính xác ngữ cảnh liên quan mà không bị nhầm lẫn giữa các vai trò (Người mua vs Người bán), qua đó giúp LLM tổng hợp câu trả lời đúng trọng tâm.
+**Điều hay nhất tôi học được:**
+> Khi sử dụng Gemini Embedding 2 trên dữ liệu chính sách Shopee thực tế (~50,000 ký tự, 83 chunks), metadata filter (`customer_role: both`) giúp truy xuất chính xác các điều khoản dành cho người bán mà không bị nhiễu bởi các chunk chỉ dành cho người mua. Ở câu hỏi 4 (về phí vận chuyển hoàn trả), khi dùng filter `customer_role=both`, hệ thống trả về đúng chunk chứa Điều 7.1 về chi phí vận chuyển mà Người Bán phải chịu (score 0.7569), trong khi không dùng filter có thể trả về chunk về thời hạn gửi yêu cầu (không liên quan).
 
 ---
 
