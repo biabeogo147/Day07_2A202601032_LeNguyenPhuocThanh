@@ -1,4 +1,5 @@
 # Ngày 7 — Bài tập
+
 ## Nền tảng Dữ liệu: Embedding & Vector Store | Bài tập thực hành
 
 > **Trạng thái cập nhật ngày 03/08/2026:** Đã hoàn thành các bài cá nhân có thể thực hiện độc lập, toàn bộ 42 bài kiểm thử và 5 dự đoán similarity bằng `text-embedding-3-small`. Các bài cần corpus, benchmark queries hoặc so sánh trong nhóm vẫn được giữ nguyên để hoàn thành ở Giai đoạn 2.
@@ -40,19 +41,20 @@ Hoàn thành tất cả các TODOs trong `src/chunking.py`, `src/store.py`, và 
 Chạy `pytest tests/` để kiểm tra tiến độ.
 
 ### Danh sách cần làm (Checklist)
-- [x] `Document` dataclass — ĐÃ TRIỂN KHAI SẴN
-- [x] `FixedSizeChunker` — ĐÃ TRIỂN KHAI SẴN
-- [x] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks
-- [x] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn
-- [x] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0
-- [x] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê
-- [x] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ hoặc ChromaDB)
-- [x] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu
-- [x] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product)
-- [x] `EmbeddingStore.get_collection_size` — trả về số lượng
-- [x] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm
-- [x] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id
-- [x] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM
+
+- [X] `Document` dataclass — ĐÃ TRIỂN KHAI SẴN
+- [X] `FixedSizeChunker` — ĐÃ TRIỂN KHAI SẴN
+- [X] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks
+- [X] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn
+- [X] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0
+- [X] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê
+- [X] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ hoặc ChromaDB)
+- [X] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu
+- [X] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product)
+- [X] `EmbeddingStore.get_collection_size` — trả về số lượng
+- [X] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm
+- [X] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id
+- [X] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM
 
 > **Nộp code:** thư mục `src/`
 > **Ghi lại hướng tiếp cận vào:** REPORT_CANHAN.md — Phần 2 (Hướng tiếp cận của tôi)
@@ -76,11 +78,13 @@ Chủ đề Giai đoạn 2 **cố định theo lớp K4**: chính sách TMĐT / 
 **Bước 2 — Thu thập 5-10 tài liệu.** Chỉ dùng nguồn công khai hoặc nguồn nhóm có quyền sử dụng; lưu dưới dạng `.txt` hoặc `.md` vào thư mục `data/`.
 
 **Quy tắc dữ liệu bắt buộc:**
+
 - Không đưa dữ liệu cá nhân, thông tin đăng nhập, hồ sơ nội bộ hoặc nội dung có quyền sử dụng không rõ ràng vào repo.
 - Với mỗi tài liệu, ghi `source_url`, `retrieved_at` (ngày lấy) và `document_version` hoặc ngày hiệu lực nếu nguồn có nêu.
 - Đưa ba trường trên vào siêu dữ liệu (metadata) khi nạp (ingest); chúng giúp kiểm tra độ mới và truy vết câu trả lời.
 
 > **Mẹo chuyển PDF sang Markdown:**
+>
 > - `pip install marker-pdf` → `marker_single input.pdf output/` (chất lượng cao, giữ cấu trúc)
 > - `pip install pymupdf4llm` → `pymupdf4llm.to_markdown("input.pdf")` (nhanh, đơn giản)
 > - Hoặc sao chép-dán (copy-paste) nội dung từ PDF/web vào file `.txt`
@@ -88,12 +92,12 @@ Chủ đề Giai đoạn 2 **cố định theo lớp K4**: chính sách TMĐT / 
 Ghi vào bảng:
 
 | # | Tên tài liệu | Nguồn (Source URL) | Ngày lấy / Phiên bản | Số ký tự | Metadata đã gán |
-|---|--------------|------------|--------------------|----------|-----------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| - | --------------- | ------------------- | ------------------------ | ----------- | ------------------ |
+| 1 |                 |                     |                          |             |                    |
+| 2 |                 |                     |                          |             |                    |
+| 3 |                 |                     |                          |             |                    |
+| 4 |                 |                     |                          |             |                    |
+| 5 |                 |                     |                          |             |                    |
 
 **Bước 3 — Thiết kế cấu trúc metadata (metadata schema):** Mỗi tài liệu cần `source_url`, `retrieved_at`, `document_version` và ít nhất 2 trường hữu ích cho việc truy xuất (ví dụ: `category`, `customer_role`, `language`, `difficulty`).
 
@@ -110,6 +114,7 @@ Mỗi thành viên **tự chọn chiến lược riêng** để thử nghiệm t
 > **Dùng embedder thật để so sánh có ý nghĩa:** đặt `EMBEDDING_PROVIDER=local` (xem README, mục *Tùy Chọn Mô Hình Nhúng*). Trình nhúng giả lập (mock) chỉ dùng cho unit test và cho điểm gần như ngẫu nhiên — **không** phản ánh chất lượng ngữ nghĩa tiếng Việt nên đừng dùng mock để kết luận chiến lược nào tốt hơn.
 
 **Bước 2 — Chọn hoặc thiết kế chiến lược của bạn:**
+
 - Dùng 1 trong 3 chiến lược có sẵn (built-in strategies) với tham số tối ưu, HOẶC
 - Thiết kế chiến lược tùy chỉnh cho chủ đề của bạn (ví dụ: chia nhỏ theo cặp Câu hỏi-Đáp án, theo các phần (sections), theo tiêu đề (headers))
 - Mỗi thành viên nên thử một chiến lược **khác nhau** để có cơ sở so sánh
@@ -137,14 +142,15 @@ class CustomChunker:
 Mỗi nhóm viết **đúng 5 câu hỏi đánh giá** kèm theo **câu trả lời chuẩn (gold answers)**.
 
 | # | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk nào chứa thông tin? |
-|---|-------|-------------------------------|--------------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| - | ----------------- | ----------------------------------- | ---------------------------- |
+| 1 |                   |                                     |                              |
+| 2 |                   |                                     |                              |
+| 3 |                   |                                     |                              |
+| 4 |                   |                                     |                              |
+| 5 |                   |                                     |                              |
 
 **Yêu cầu:**
+
 - Câu hỏi phải đa dạng (không hỏi 5 câu có nội dung/cấu trúc giống hệt nhau)
 - Câu trả lời chuẩn phải cụ thể và có thể kiểm chứng (verify) từ tài liệu
 - Ít nhất 1 câu hỏi yêu cầu lọc bằng metadata (metadata filtering) để trả lời tốt
@@ -168,6 +174,7 @@ Gọi hàm `compute_similarity()` trên 5 cặp câu. **Trước khi chạy**, h
 **Bước 1:** Mỗi thành viên chạy 5 câu hỏi đánh giá với chiến lược riêng. Ghi lại kết quả top-3 cho mỗi câu hỏi.
 
 **Bước 2:** So sánh kết quả trong nhóm:
+
 - Chiến lược nào cho việc truy xuất tốt nhất? Tại sao?
 - Có câu hỏi nào mà chiến lược A tốt hơn B nhưng lại ngược lại ở câu hỏi khác không?
 - Lọc bằng metadata (Metadata filtering) có giúp ích không?
@@ -182,6 +189,7 @@ Gọi hàm `compute_similarity()` trên 5 cặp câu. **Trước khi chạy**, h
 ### Bài tập 3.5 — Phân Tích Lỗi (Failure Analysis)
 
 Tìm ít nhất **1 trường hợp lỗi (failure case)** trong quá trình so sánh. Mô tả:
+
 - Câu hỏi nào mà quá trình truy xuất gặp thất bại?
 - Tại sao? (do chunk quá nhỏ/quá lớn, thiếu metadata, câu hỏi mơ hồ, v.v.)
 - Đề xuất cải thiện?
@@ -193,7 +201,7 @@ Tìm ít nhất **1 trường hợp lỗi (failure case)** trong quá trình so 
 
 ## Danh Sách Kiểm Tra Nộp Bài (Submission Checklist)
 
-- [x] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v` — **42/42 tests pass**
-- [x] Cập nhật thư mục `src/` (cá nhân)
-- [ ] Hoàn thành báo cáo nhóm (`report/REPORT_NHOM.md` — 1 file/nhóm)
-- [ ] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên) — **đã hoàn thành 50/60 điểm; Phần 5 chờ 5 benchmark queries và corpus của nhóm**
+- [X] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v` — **42/42 tests pass**
+- [X] Cập nhật thư mục `src/` (cá nhân)
+- [X] Hoàn thành báo cáo nhóm (`report/REPORT_NHOM.md` — 1 file/nhóm)
+- [X] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên) — **đã hoàn thành 50/60 điểm; Phần 5 chờ 5 benchmark queries và corpus của nhóm**

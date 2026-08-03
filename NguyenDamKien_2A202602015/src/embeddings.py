@@ -7,6 +7,7 @@ import math
 # The local backend remains optional; required checkpoints use MockEmbedder.
 LOCAL_EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
+GEMINI_EMBEDDING_MODEL = "models/gemini-embedding-001"
 EMBEDDING_PROVIDER_ENV = "EMBEDDING_PROVIDER"
 
 
@@ -58,6 +59,39 @@ class OpenAIEmbedder:
     def __call__(self, text: str) -> list[float]:
         response = self.client.embeddings.create(model=self.model_name, input=text)
         return [float(value) for value in response.data[0].embedding]
+
+
+class GeminiEmbedder:
+    """Gemini embeddings API-backed embedder."""
+
+    def __init__(self, model_name: str = GEMINI_EMBEDDING_MODEL) -> None:
+        self.model_name = model_name
+        self._backend_name = model_name
+
+    def __call__(self, text: str) -> list[float]:
+        import os
+        import requests
+
+        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY chưa được thiết lập")
+
+        model_name = self.model_name
+        if not model_name.startswith("models/"):
+            model_name = f"models/{model_name}"
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/{model_name}:embedContent?key={api_key}"
+        payload = {
+            "model": model_name,
+            "content": {"parts": [{"text": text}]},
+        }
+        resp = requests.post(url, json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        embedding = data.get("embedding", {}).get("values")
+        if not embedding:
+            raise RuntimeError("Gemini không trả về embedding")
+        return [float(value) for value in embedding]
 
 
 _mock_embed = MockEmbedder()
