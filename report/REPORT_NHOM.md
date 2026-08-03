@@ -1,7 +1,13 @@
 # Báo Cáo Nhóm — Lab 7: Embedding & Vector Store
 
 **Nhóm:** Những con vịt bầu  
-**Thành viên:** Nguyễn Văn Nam (Mã HV: 2A202601973, Khóa K4)  
+**Thành viên:**
+1. Nguyễn Đàm Kiên (Mã HV: 2A202602015)
+2. Lê Nguyễn Phước Thành (Mã HV: 2A202601032)
+3. Nguyễn Văn Nam (Mã HV: 2A202601973)
+4. Lê Kim Tính (Mã HV: 2A202601560)
+5. Trần Chí Hiển (Mã HV: 2A202601162)  
+**Khóa:** K4  
 **Ngày:** 03/08/2026  
 
 > **Nộp 1 bản / nhóm.** Chi tiết thang điểm: `docs/SCORING.md`.
@@ -62,7 +68,7 @@
 
 ### Chiến lược của từng thành viên
 
-**Thành viên 1 — Nguyễn Văn Nam**
+**Thành viên 1 — Nguyễn Văn Nam (2A202601973)**
 - **Loại chiến lược:** `RecursiveChunker` (chunk_size=500) kết hợp `Gemini Embedding 2`
 - **Mô tả & lý do:** Chính sách Shopee có cấu trúc phân cấp theo điều/khoản/mục. RecursiveChunker tôn trọng cấu trúc này bằng cách ưu tiên tách tại ranh giới đoạn văn (`\n\n`) trước, rồi mới xuống dòng (`\n`), rồi câu (`. `). Với chunk_size=500, mỗi chunk giữ trọn 1-2 điều khoản liên quan, tránh tình trạng cắt ngang quy định quan trọng.
 - **Code snippet:**
@@ -73,6 +79,22 @@ from src.embeddings import GeminiEmbedder
 chunker = RecursiveChunker(chunk_size=500)
 embedder = GeminiEmbedder(model_name="models/gemini-embedding-2")
 ```
+
+**Thành viên 2 — Lê Nguyễn Phước Thành (2A202601032)**
+- **Loại chiến lược:** `SentenceChunker` (max_sentences=3) kết hợp `Gemini Embedding 2`
+- **Mô tả & lý do:** Chia văn bản theo từng nhóm 3 câu hoàn chỉnh, đảm bảo tính toàn vẹn về mặt ngữ pháp và ngữ nghĩa của câu phát biểu trong chính sách.
+
+**Thành viên 3 — Nguyễn Đàm Kiên (2A202602015)**
+- **Loại chiến lược:** `FixedSizeChunker` (chunk_size=400, overlap=50) kết hợp `Gemini Embedding 2`
+- **Mô tả & lý do:** Phân đoạn theo kích thước cố định với độ gối đầu 50 ký tự để duy trì liên tục ngữ cảnh giữa các ranh giới cắt.
+
+**Thành viên 4 — Lê Kim Tính (2A202601560)**
+- **Loại chiến lược:** `RecursiveChunker` (chunk_size=300) kết hợp `Gemini Embedding 2`
+- **Mô tả & lý do:** Thử nghiệm kích thước chunk nhỏ hơn để tăng độ mịn khi truy xuất các câu trả lời ngắn, tập trung vào từng điều khoản con.
+
+**Thành viên 5 — Trần Chí Hiển (2A202601162)**
+- **Loại chiến lược:** `SentenceChunker` (max_sentences=5) kết hợp `Gemini Embedding 2`
+- **Mô tả & lý do:** Gom cụm 5 câu liên tiếp để bao trọn một bước hướng dẫn quy trình xử lý đổi trả chi tiết trên sàn.
 
 ### So Sánh Giữa Các Chiến Lược
 
