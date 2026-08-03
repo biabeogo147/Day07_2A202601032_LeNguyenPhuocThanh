@@ -1,8 +1,8 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
-**Họ tên:** [Tên sinh viên]
-**Nhóm:** [Tên nhóm]
-**Ngày:** [Ngày nộp]
+**Họ tên:** Lê Nguyễn Phước Thành
+**Nhóm:** Những con vịt bầu
+**Ngày:** 03/08/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -15,29 +15,29 @@
 ### Độ tương tự Cosine (Cosine Similarity) (Bài tập 1.1)
 
 **Độ tương tự cosine cao (High cosine similarity) nghĩa là gì?**
-> *Viết 1-2 câu:*
+> Độ tương tự cosine cao nghĩa là hai vector embedding hướng gần giống nhau, nên hai đoạn văn thường có nội dung hoặc ý nghĩa gần nhau. Giá trị càng gần 1 thì mức tương đồng theo hướng càng cao.
 
 **Ví dụ có độ tương tự CAO:**
-- Câu A:
-- Câu B:
-- Tại sao tương đồng:
+- Câu A: Khách hàng có thể đổi trả sản phẩm trong vòng 7 ngày.
+- Câu B: Người mua được phép hoàn hàng trong bảy ngày kể từ khi nhận.
+- Tại sao tương đồng: Hai câu cùng diễn đạt quyền đổi trả của người mua trong thời hạn bảy ngày, dù dùng từ khác nhau.
 
 **Ví dụ có độ tương tự THẤP:**
-- Câu A:
-- Câu B:
-- Tại sao khác:
+- Câu A: Khách hàng có thể thanh toán bằng thẻ tín dụng.
+- Câu B: Rừng nhiệt đới có đa dạng sinh học cao.
+- Tại sao khác: Một câu nói về phương thức thanh toán, câu còn lại nói về hệ sinh thái nên gần như không có chủ đề chung.
 
 **Tại sao độ tương tự cosine (cosine similarity) được ưu tiên hơn khoảng cách Euclid (Euclidean distance) cho text embeddings?**
-> *Viết 1-2 câu:*
+> Cosine tập trung vào góc giữa hai vector, tức hướng biểu diễn ngữ nghĩa, và ít bị ảnh hưởng bởi độ lớn vector. Khoảng cách Euclid phụ thuộc cả hướng lẫn độ lớn nên hai embedding có cùng ý nghĩa nhưng khác norm vẫn có thể bị xem là cách xa nhau.
 
 ### Bài toán tính toán Chunking (Bài tập 1.2)
 
 **Tài liệu 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
-> *Trình bày phép tính:*
-> *Đáp án:*
+> Phép tính: `ceil((10,000 - 50) / (500 - 50)) = ceil(9,950 / 450) = ceil(22.111...)`.
+> Đáp án: **23 chunks**.
 
 **Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk thay đổi thế nào? Tại sao muốn độ chồng chéo nhiều hơn?**
-> *Viết 1-2 câu:*
+> Khi overlap tăng lên 100: `ceil((10,000 - 100) / (500 - 100)) = ceil(9,900 / 400) = 25`, nên số chunk tăng từ 23 lên **25**. Overlap lớn hơn giúp giữ lại ngữ cảnh nằm gần ranh giới chunk, đổi lại cần lưu trữ và xử lý nhiều dữ liệu trùng lặp hơn.
 
 ---
 
@@ -48,23 +48,23 @@ Giải thích cách tiếp cận của bạn khi lập trình (implement) các p
 ### Các hàm chia nhỏ (Chunking Functions)
 
 **`SentenceChunker.chunk`** — hướng tiếp cận:
-> *Viết 2-3 câu: dùng biểu thức chính quy (regex) gì để phát hiện câu? Xử lý trường hợp ngoại lệ (edge case) nào?*
+> Tôi dùng regex `(?<=[.!?])(?:[ \t]+|\n+)` để tách tại khoảng trắng hoặc xuống dòng sau dấu kết câu, nhờ vậy dấu câu vẫn thuộc về câu trước. Các phần rỗng và văn bản chỉ có khoảng trắng được loại bỏ; số câu mỗi chunk được chặn tối thiểu là 1.
 
 **`RecursiveChunker.chunk` / `_split`** — hướng tiếp cận:
-> *Viết 2-3 câu: thuật toán hoạt động thế nào? Base case (trường hợp cơ sở) là gì?*
+> Thuật toán thử separator theo thứ tự đoạn văn, dòng, câu, từ rồi ký tự; các mảnh nhỏ được ghép tuần tự cho đến giới hạn `chunk_size`, còn mảnh quá lớn được xử lý bằng separator kế tiếp. Base case là văn bản đã đủ ngắn; nếu hết separator thì hard-split theo số ký tự để tránh đệ quy vô hạn.
 
 ### Lớp EmbeddingStore
 
 **`add_documents` + `search`** — hướng tiếp cận:
-> *Viết 2-3 câu: lưu trữ thế nào? Tính độ tương tự ra sao?*
+> Mỗi `Document` được nhúng, chuẩn hóa thành record có ID vật lý duy nhất, nội dung, metadata và embedding rồi lưu vào ChromaDB Ephemeral với HNSW inner-product; một bản mirror in-memory được giữ để fallback. `search` nhúng truy vấn, lấy kết quả theo inner product và chuyển Chroma distance thành `score = 1 - distance`; nhánh fallback tính dot product trực tiếp.
 
 **`search_with_filter` + `delete_document`** — hướng tiếp cận:
-> *Viết 2-3 câu: lọc (filter) trước hay sau? Xóa bằng cách nào?*
+> Metadata được lọc trước khi similarity search; nhiều điều kiện được kết hợp bằng `$and` và so khớp chính xác. `delete_document` tìm mọi record có `metadata["doc_id"]` tương ứng, xóa toàn bộ ID vật lý khỏi Chroma và bản mirror, sau đó trả `True` nếu thực sự có record bị xóa.
 
 ### Tác tử KnowledgeBaseAgent
 
 **`answer`** — hướng tiếp cận:
-> *Viết 2-3 câu: cấu trúc prompt? Cách đưa ngữ cảnh (inject context) vào thế nào?*
+> Agent truy xuất top-k chunk, đánh số từng ngữ cảnh và thêm nguồn từ `source_url` hoặc `source` nếu có. Prompt gồm chỉ dẫn chỉ được dựa trên ngữ cảnh, phần `NGỮ CẢNH`, `CÂU HỎI` và `TRẢ LỜI`; khi không có chunk, prompt yêu cầu LLM nói rõ không đủ thông tin thay vì suy đoán.
 
 ---
 
@@ -75,10 +75,19 @@ Vượt qua bộ kiểm thử là điều kiện tính điểm phần này.
 ### Kết Quả Kiểm Thử (Test Results)
 
 ```
-# Dán kết quả (output) của: pytest tests/ -v
+D:\AI-DS-Study\Lab\Day04_2A202601032_LeNguyenPhuocThanh\.venv\Scripts\python.exe -m pytest tests/ -v
+
+============================= test session starts =============================
+platform win32 -- Python 3.10.6, pytest-9.1.1
+rootdir: D:\AI-DS-Study\Lab\Day07_2A202601032_LeNguyenPhuocThanh
+collected 42 items
+
+tests/test_solution.py ..........................................        [100%]
+
+============================= 42 passed in 1.18s ==============================
 ```
 
-**Số lượng bài test vượt qua (pass):** __ / 42
+**Số lượng bài test vượt qua (pass):** **42 / 42**
 
 ---
 
@@ -86,14 +95,16 @@ Vượt qua bộ kiểm thử là điều kiện tính điểm phần này.
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | | | cao / thấp | | |
-| 2 | | | cao / thấp | | |
-| 3 | | | cao / thấp | | |
-| 4 | | | cao / thấp | | |
-| 5 | | | cao / thấp | | |
+| 1 | Khách hàng có thể đổi trả sản phẩm trong vòng 7 ngày. | Người mua được phép hoàn hàng trong bảy ngày kể từ khi nhận. | Cao | 0.533952 | Có |
+| 2 | Người bán phải cung cấp thông tin sản phẩm chính xác. | Nhà bán hàng cần mô tả sản phẩm trung thực và đầy đủ. | Cao | 0.650115 | Có |
+| 3 | Đơn hàng sẽ được giao trong 3 đến 5 ngày làm việc. | Thời gian vận chuyển dự kiến là ba đến năm ngày làm việc. | Cao nhất | 0.667857 | Có |
+| 4 | Khách hàng có thể thanh toán bằng thẻ tín dụng. | Rừng nhiệt đới có đa dạng sinh học cao. | Thấp nhất | 0.271100 | Có |
+| 5 | Chính sách bảo mật giải thích cách dữ liệu cá nhân được sử dụng. | Người bán phải đóng gói hàng hóa cẩn thận trước khi giao. | Thấp | 0.318510 | Có |
+
+> **Cách đo:** Nhúng từng câu bằng OpenAI `text-embedding-3-small`, sau đó gọi `compute_similarity()` trên từng cặp vector. Dự đoán được ghi trước khi chạy mô hình.
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> *Viết 2-3 câu:*
+> Cặp 1 làm tôi bất ngờ nhất: hai câu đều nói về đổi trả trong bảy ngày nhưng điểm `0.533952` thấp hơn rõ rệt so với hai cặp diễn đạt lại về người bán và giao hàng. Điều này cho thấy embedding không chỉ đếm từ khóa chung mà mã hóa toàn bộ ngữ cảnh và cách diễn đạt; vì vậy nên đánh giá điểm theo tương quan giữa các cặp thay vì dùng một ngưỡng tuyệt đối cứng nhắc.
 
 ---
 
@@ -120,9 +131,9 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | Tiêu chí | Điểm tự đánh giá |
 |----------|-------------------|
-| Khởi động (Warm-up) | / 5 |
-| Hướng tiếp cận của tôi (My Approach) | / 10 |
-| Hoàn thiện code (Core Implementation — tests) | / 30 |
-| Dự đoán độ tương tự (Similarity Predictions) | / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | / 10 |
-| **Tổng phần cá nhân** | **/ 60** |
+| Khởi động (Warm-up) | 5 / 5 |
+| Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
+| Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
+| Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
+| Kết quả truy xuất của tôi (Competition Results) | Chưa thực hiện / 10 |
+| **Tổng phần cá nhân tạm thời** | **50 / 60** |
