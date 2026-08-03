@@ -1,6 +1,8 @@
 # Ngày 7 — Bài tập
 ## Nền tảng Dữ liệu: Embedding & Vector Store | Bài tập thực hành
 
+> **Trạng thái cập nhật ngày 03/08/2026:** Đã hoàn thành các bài cá nhân có thể thực hiện độc lập, toàn bộ 42 bài kiểm thử và 5 dự đoán similarity bằng `text-embedding-3-small`. Các bài cần corpus, benchmark queries hoặc so sánh trong nhóm vẫn được giữ nguyên để hoàn thành ở Giai đoạn 2.
+
 ---
 
 ## Phần 1 — Khởi động (Cá nhân)
@@ -14,6 +16,8 @@ Không yêu cầu toán học — hãy giải thích về mặt khái niệm:
 - Tại sao độ tương tự cosine lại được ưu tiên hơn khoảng cách Euclid (Euclidean distance) đối với text embeddings?
 
 > **Ghi kết quả vào:** REPORT_CANHAN.md — Phần 1 (Khởi động)
+>
+> ✅ **Đã hoàn thành:** Xem `report/REPORT_CANHAN.md`, Phần 1.
 
 ---
 
@@ -24,6 +28,8 @@ Không yêu cầu toán học — hãy giải thích về mặt khái niệm:
 - Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk sẽ thay đổi như thế nào? Tại sao bạn lại muốn tăng độ chồng chéo?
 
 > **Ghi kết quả vào:** REPORT_CANHAN.md — Phần 1 (Khởi động)
+>
+> ✅ **Đã hoàn thành:** Kết quả là 23 chunks khi overlap bằng 50 và 25 chunks khi overlap bằng 100; xem phần trình bày phép tính trong `report/REPORT_CANHAN.md`, Phần 1.
 
 ---
 
@@ -36,20 +42,22 @@ Chạy `pytest tests/` để kiểm tra tiến độ.
 ### Danh sách cần làm (Checklist)
 - [x] `Document` dataclass — ĐÃ TRIỂN KHAI SẴN
 - [x] `FixedSizeChunker` — ĐÃ TRIỂN KHAI SẴN
-- [ ] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks
-- [ ] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn
-- [ ] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0
-- [ ] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê
-- [ ] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ hoặc ChromaDB)
-- [ ] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu
-- [ ] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product)
-- [ ] `EmbeddingStore.get_collection_size` — trả về số lượng
-- [ ] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm
-- [ ] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id
-- [ ] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM
+- [x] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks
+- [x] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn
+- [x] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0
+- [x] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê
+- [x] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ hoặc ChromaDB)
+- [x] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu
+- [x] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product)
+- [x] `EmbeddingStore.get_collection_size` — trả về số lượng
+- [x] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm
+- [x] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id
+- [x] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM
 
 > **Nộp code:** thư mục `src/`
 > **Ghi lại hướng tiếp cận vào:** REPORT_CANHAN.md — Phần 2 (Hướng tiếp cận của tôi)
+>
+> ✅ **Đã hoàn thành:** `42/42` tests pass; cách triển khai và kết quả kiểm thử đã được ghi trong `report/REPORT_CANHAN.md`, Phần 2–3.
 
 ---
 
@@ -150,6 +158,8 @@ Mỗi nhóm viết **đúng 5 câu hỏi đánh giá** kèm theo **câu trả l�
 Gọi hàm `compute_similarity()` trên 5 cặp câu. **Trước khi chạy**, hãy dự đoán xem cặp câu nào sẽ có độ tương tự cao nhất/thấp nhất. Ghi lại các dự đoán của bạn và kết quả thực tế. Suy ngẫm xem điều gì khiến bạn ngạc nhiên nhất.
 
 > **Ghi kết quả vào:** REPORT_CANHAN.md — Phần 4 (Dự đoán độ tương tự)
+>
+> ✅ **Đã hoàn thành:** Đã dự đoán và đo 5 cặp câu bằng OpenAI `text-embedding-3-small`; xem `report/REPORT_CANHAN.md`, Phần 4.
 
 ---
 
@@ -183,7 +193,7 @@ Tìm ít nhất **1 trường hợp lỗi (failure case)** trong quá trình so 
 
 ## Danh Sách Kiểm Tra Nộp Bài (Submission Checklist)
 
-- [ ] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v`
-- [ ] Cập nhật thư mục `src/` (cá nhân)
+- [x] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v` — **42/42 tests pass**
+- [x] Cập nhật thư mục `src/` (cá nhân)
 - [ ] Hoàn thành báo cáo nhóm (`report/REPORT_NHOM.md` — 1 file/nhóm)
-- [ ] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên)
+- [ ] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên) — **đã hoàn thành 50/60 điểm; Phần 5 chờ 5 benchmark queries và corpus của nhóm**
