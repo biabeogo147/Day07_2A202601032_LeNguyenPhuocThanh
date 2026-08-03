@@ -120,11 +120,15 @@ class PolicySectionChunker:
 ```
 
 **Thành viên 3 — Nguyễn Đàm Kiên (2A202602015)**
-- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
-- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Loại chiến lược:** `SentenceChunker` với `max_sentences_per_chunk=3`, kết hợp `GeminiEmbedder` (`models/gemini-embedding-001`)
+- **Mô tả & lý do:** Chiến lược này phù hợp với tài liệu chính sách Shopee vì nội dung thường được trình bày theo từng câu/điều riêng biệt. Bằng cách gom 3 câu vào một chunk, nhóm giữ được ngữ cảnh câu đầy đủ, tránh cắt ngang giữa các câu liên quan và vẫn giữ số lượng chunk vừa đủ để truy xuất hiệu quả. Khi kết hợp với Gemini embedding, hệ thống có thể tìm được chunk liên quan tốt hơn cho các câu hỏi về đổi hàng, hoàn tiền và phí vận chuyển.
 - **Code snippet:**
 ```python
-# Điền code cấu hình chiến lược
+from NguyenDamKien_2A202602015.src.chunking import SentenceChunker
+from NguyenDamKien_2A202602015.src.embeddings import GeminiEmbedder
+
+chunker = SentenceChunker(max_sentences_per_chunk=3)
+embedder = GeminiEmbedder(model_name="models/gemini-embedding-001")
 ```
 
 **Thành viên 4 — Lê Kim Tính (2A202601560)**

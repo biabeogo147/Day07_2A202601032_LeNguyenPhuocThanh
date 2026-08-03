@@ -22,8 +22,10 @@ from src.embeddings import (
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-# Thư mục dữ liệu mặc định cho demo: ưu tiên bộ dữ liệu thật của nhóm nếu có
-DEFAULT_DATA_DIR = "data/shopee_customer_support" if Path("data/shopee_customer_support").exists() else "data/k4_ecommerce"
+# Thư mục dữ liệu mặc định cho demo = bộ khởi động cố định của lớp K4.
+
+# Đổi bằng biến môi trường: LAB_DATA_DIR=data/<thu-muc-cua-nhom> python3 main.py
+DEFAULT_DATA_DIR = "data/shopee_customer_support"
 
 
 def _select_embedder():
@@ -125,55 +127,9 @@ def run_manual_demo(question: str | None = None, data_dir: str | None = None) ->
     return 0
 
 
-def run_interactive_demo(data_dir: str | None = None) -> int:
-    data_dir = data_dir or DEFAULT_DATA_DIR
-    print("=== Khởi tạo pipeline RAG (ingest.build_knowledge_base) ===")
-    print(f"Thư mục dữ liệu: {data_dir}")
-    embedder = _select_embedder()
-    backend = getattr(embedder, "_backend_name", embedder.__class__.__name__)
-    print(f"Backend nhúng: {backend}")
-
-    store = build_knowledge_base(data_dir, embedding_fn=embedder)
-    print(f"Đã nạp thành công {store.get_collection_size()} chunks vào Vector Store!")
-    
-    agent = KnowledgeBaseAgent(store=store, llm_fn=demo_llm)
-    print("\n" + "="*50)
-    print("🤖 CHẾ ĐỘ HỎI ĐÁP TƯƠNG TÁC (INTERACTIVE MODE)")
-    print("Nhập câu hỏi của bạn (hoặc gõ 'exit' / 'quit' để thoát):")
-    print("="*50 + "\n")
-
-    while True:
-        try:
-            query = input("❓ Câu hỏi: ").strip()
-            if not query:
-                continue
-            if query.lower() in ("exit", "quit", "q"):
-                print("Tạm biệt!")
-                break
-
-            print("\n🔍 Đang tìm kiếm chunks liên quan...")
-            results = store.search(query, top_k=3)
-            for idx, res in enumerate(results, 1):
-                src = res['metadata'].get('source', 'unknown')
-                print(f"   [{idx}] Score: {res['score']:.4f} | Source: {src}")
-                print(f"       Preview: {res['content'][:100].replace(chr(10), ' ')}...")
-
-            print("\n🤖 Trả lời từ KnowledgeBaseAgent:")
-            answer = agent.answer(query, top_k=3)
-            print(answer)
-            print("\n" + "-"*50 + "\n")
-        except (KeyboardInterrupt, EOFError):
-            print("\nTạm biệt!")
-            break
-    return 0
-
-
 def main() -> int:
-    args = sys.argv[1:]
+    question = " ".join(sys.argv[1:]).strip() or None
     data_dir = os.getenv("LAB_DATA_DIR", DEFAULT_DATA_DIR)
-    if "-i" in args or "--interactive" in args:
-        return run_interactive_demo(data_dir=data_dir)
-    question = " ".join(args).strip() or None
     return run_manual_demo(question=question, data_dir=data_dir)
 
 
