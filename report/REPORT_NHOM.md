@@ -81,11 +81,42 @@ embedder = GeminiEmbedder(model_name="models/gemini-embedding-2")
 ```
 
 **Thành viên 2 — Lê Nguyễn Phước Thành (2A202601032)**
-- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
-- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Loại chiến lược:** `PolicySectionChunker` (section-aware, `chunk_size=800`) kết hợp OpenAI `text-embedding-3-small`
+- **Mô tả & lý do:** Chính sách Shopee được tổ chức theo các heading và điều khoản đánh số như `1.2`, `2.2`, `5.`. Chiến lược giữ tiêu đề đi cùng nội dung, sau đó dùng `RecursiveChunker` khi section quá dài để hạn chế cắt rời điều kiện khỏi chủ đề; trên toàn bộ 5 tài liệu, chiến lược tạo 54 chunks với độ dài trung bình 574,6 ký tự.
 - **Code snippet:**
 ```python
-# Điền code cấu hình chiến lược
+import re
+
+from LeNguyenPhuocThanh_2A202601032.src.chunking import RecursiveChunker
+
+
+class PolicySectionChunker:
+    HEADING = re.compile(
+        r"^(?:#{1,6}\s+.+|\d+(?:\.\d+)*(?:\.)?\s+\S.+)$"
+    )
+
+    def __init__(self, chunk_size=800):
+        self.recursive = RecursiveChunker(chunk_size=chunk_size)
+
+    def chunk(self, text):
+        chunks, heading, body_lines = [], "Mở đầu", []
+
+        def flush_section():
+            body = "\n".join(body_lines).strip()
+            for part in self.recursive.chunk(body):
+                chunks.append(f"{heading}\n{part}".strip())
+            body_lines.clear()
+
+        for line in text.splitlines():
+            line = line.strip()
+            if line and self.HEADING.match(line):
+                flush_section()
+                heading = line
+            elif line:
+                body_lines.append(line)
+
+        flush_section()
+        return chunks
 ```
 
 **Thành viên 3 — Nguyễn Đàm Kiên (2A202602015)**
