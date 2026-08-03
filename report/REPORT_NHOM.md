@@ -81,20 +81,36 @@ embedder = GeminiEmbedder(model_name="models/gemini-embedding-2")
 ```
 
 **Thành viên 2 — Lê Nguyễn Phước Thành (2A202601032)**
-- **Loại chiến lược:** `SentenceChunker` (max_sentences=3) kết hợp `Gemini Embedding 2`
-- **Mô tả & lý do:** Chia văn bản theo từng nhóm 3 câu hoàn chỉnh, đảm bảo tính toàn vẹn về mặt ngữ pháp và ngữ nghĩa của câu phát biểu trong chính sách.
+- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
+- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Code snippet:**
+```python
+# Điền code cấu hình chiến lược
+```
 
 **Thành viên 3 — Nguyễn Đàm Kiên (2A202602015)**
-- **Loại chiến lược:** `FixedSizeChunker` (chunk_size=400, overlap=50) kết hợp `Gemini Embedding 2`
-- **Mô tả & lý do:** Phân đoạn theo kích thước cố định với độ gối đầu 50 ký tự để duy trì liên tục ngữ cảnh giữa các ranh giới cắt.
+- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
+- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Code snippet:**
+```python
+# Điền code cấu hình chiến lược
+```
 
 **Thành viên 4 — Lê Kim Tính (2A202601560)**
-- **Loại chiến lược:** `RecursiveChunker` (chunk_size=300) kết hợp `Gemini Embedding 2`
-- **Mô tả & lý do:** Thử nghiệm kích thước chunk nhỏ hơn để tăng độ mịn khi truy xuất các câu trả lời ngắn, tập trung vào từng điều khoản con.
+- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
+- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Code snippet:**
+```python
+# Điền code cấu hình chiến lược
+```
 
 **Thành viên 5 — Trần Chí Hiển (2A202601162)**
-- **Loại chiến lược:** `SentenceChunker` (max_sentences=5) kết hợp `Gemini Embedding 2`
-- **Mô tả & lý do:** Gom cụm 5 câu liên tiếp để bao trọn một bước hướng dẫn quy trình xử lý đổi trả chi tiết trên sàn.
+- **Loại chiến lược:** `[Điền loại chiến lược và tham số]`
+- **Mô tả & lý do:** `[Điền mô tả và lý do chọn chiến lược]`
+- **Code snippet:**
+```python
+# Điền code cấu hình chiến lược
+```
 
 ### So Sánh Giữa Các Chiến Lược
 
