@@ -29,6 +29,9 @@ class MockEmbedder:
         return [value / norm for value in vector]
 
 
+_EMBEDDING_CACHE: dict[tuple[str, str], list[float]] = {}
+
+
 class GeminiEmbedder:
     """Gemini embeddings API-backed embedder using models/gemini-embedding-2."""
 
@@ -45,8 +48,13 @@ class GeminiEmbedder:
 
     def __call__(self, text: str) -> list[float]:
         import os
+        import time
         import requests
         from dotenv import load_dotenv
+
+        cache_key = (self.model_name, text)
+        if cache_key in _EMBEDDING_CACHE:
+            return _EMBEDDING_CACHE[cache_key]
 
         load_dotenv(override=False)
         api_key = self.api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
@@ -59,12 +67,34 @@ class GeminiEmbedder:
                 "parts": [{"text": text}]
             }
         }
-        response = requests.post(url, json=payload, timeout=30)
+        
+        max_retries = 6
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(url, json=payload, timeout=30)
+                if response.status_code == 429:
+                    wait_time = 2 ** attempt + 1
+                    time.sleep(wait_time)
+                    continue
+                response.raise_for_status()
+                data = response.json()
+                embedding = data.get("embedding", {}).get("values", [])
+                norm = math.sqrt(sum(value * value for value in embedding)) or 1.0
+                res = [float(value / norm) for value in embedding]
+                _EMBEDDING_CACHE[cache_key] = res
+                return res
+            except requests.exceptions.RequestException as e:
+                if attempt == max_retries - 1:
+                    raise
+                time.sleep(2 ** attempt + 1)
+        
         response.raise_for_status()
         data = response.json()
         embedding = data.get("embedding", {}).get("values", [])
         norm = math.sqrt(sum(value * value for value in embedding)) or 1.0
-        return [float(value / norm) for value in embedding]
+        res = [float(value / norm) for value in embedding]
+        _EMBEDDING_CACHE[cache_key] = res
+        return res
 
 
 
