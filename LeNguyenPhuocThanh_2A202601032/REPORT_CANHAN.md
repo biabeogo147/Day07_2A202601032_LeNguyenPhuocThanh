@@ -114,16 +114,20 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Shopee có hỗ trợ đổi hàng không? Nếu hàng có vấn đề thì người mua phải làm gì? | `return-refund-general-rules/1`: Điều 1.1 nêu Shopee chưa hỗ trợ đổi hàng và hai cách xử lý khi hàng có vấn đề. | 0,7574 | Có, top-1 | Trả đúng: từ chối nhận khi đồng kiểm hoặc gửi yêu cầu Trả hàng/Hoàn tiền — **2/2**. |
+| 2 | Thời hạn gửi yêu cầu trả hàng/hoàn tiền trên Shopee là bao lâu? | `return-refund-general-rules/2`: các mốc 24 giờ, 15 ngày và 20 ngày. | 0,7762 | Có, top-1 | Trả đúng đầy đủ thời hạn cho thực phẩm, đơn tiêu chuẩn và đơn người bán tự vận chuyển — **2/2**. |
+| 3 | Người mua cần gửi yêu cầu trả hàng bằng cách nào trên ứng dụng Shopee? | `return-refund-request-guide/2`: biểu mẫu, bằng chứng và thao tác gửi; chunk `/1` ở top-2 chứa phần bắt đầu của cách 1. | 0,7712 | Có, top-1 và top-2 | Trả đúng hai cách, các bước, mô tả và ảnh/video cần cung cấp — **2/2**. |
+| 4 | Người bán phải chịu phí vận chuyển hoàn trả trong trường hợp nào? Filter `customer_role=both`. | Không có kết quả: corpus thực tế không có record mang `customer_role=both`. | — | Không | Agent nói rõ không tìm thấy đủ ngữ cảnh, không suy đoán — **0/2**. |
+| 5 | Có những phương thức gửi hàng hoàn trả nào và chi phí ra sao? | `return-shipping-methods/0`: heading đúng chủ đề; `/1` và `/7` ở top-2/top-3 chứa ba phương thức và chính sách phí. | 0,6849 | Có trong top-3 | Trả đúng ba phương thức và cơ chế trả trước/hoàn sau nhưng thiếu mức 25.000/40.000 Shopee Xu — **1/2**. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **4 / 5**
+
+**Thiết lập chạy:** `PolicySectionChunker(chunk_size=800)` + OpenAI `text-embedding-3-small` + ChromaDB inner product; Agent dùng `gpt-4.1-mini`, chỉ trả lời từ top-3 context. Tổng điểm theo rubric: **7/10**.
+
+**Failure case đáng chú ý:** Q4 trong benchmark nhóm yêu cầu filter `customer_role=both`, nhưng YAML front matter thực tế của `return-refund-policy.md` vẫn là `customer_role=buyer`. Vì pre-filter không tìm được candidate, recall bằng 0 dù Điều 7.1 có nội dung liên quan. Cần thống nhất enum metadata và kiểm tra số record theo từng filter trước khi so sánh chiến lược.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *Viết 2-3 câu:*
+> Kết quả RecursiveChunker của thành viên khác cho thấy chunk nhỏ theo ranh giới đoạn có thể đưa một điều khoản ngắn lên top-1 rất tốt, trong khi Policy Section giúp mỗi chunk giữ được nhãn điều khoản và dễ truy nguồn hơn. Quan trọng hơn, mọi thành viên phải chạy trên cùng một snapshot corpus và schema: sai khác `buyer`/`both` có thể làm thay đổi kết quả nhiều hơn cả lựa chọn chunker hoặc embedding model.
 
 ---
 
@@ -135,5 +139,5 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | Chưa thực hiện / 10 |
-| **Tổng phần cá nhân tạm thời** | **50 / 60** |
+| Kết quả truy xuất của tôi (Competition Results) | 7 / 10 |
+| **Tổng phần cá nhân** | **57 / 60** |
